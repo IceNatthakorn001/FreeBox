@@ -1,15 +1,12 @@
+import Card from './components/Card'
+
 function App() {
   return (
     <div>
       <h1>FreeBox</h1>
-      <p>Write your note in life</p>
-      <ul>
-        <li>Home</li>
-        <li>note</li>
-        <li>in-outcome</li>
-        <li>linkIn</li>
-      </ul>
-      <h3>Test</h3>
+      <Card title="เงิน" description="ใช้ไปวันนี้ 0 บาท" />
+      <Card title="การบ้าน" description="ยังไม่มีการบ้าน" />
+      <Card title="โน้ต" description="ยังไม่มีโน้ต" />
     </div>
   )
 }
