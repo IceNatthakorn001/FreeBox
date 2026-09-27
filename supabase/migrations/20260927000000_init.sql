@@ -143,6 +143,20 @@ create policy "own rows: update" on public.notes for update using (user_id = aut
 
 
 -- ---------------------------------------------------------------------
+-- 7.1) สิทธิ์เข้าถึงตารางผ่าน API (GRANT)
+--
+--    Supabase มี 2 บทบาท: anon (ยังไม่ล็อกอิน) และ authenticated (ล็อกอินแล้ว)
+--    GRANT = ประตูชั้นแรก "บทบาทนี้แตะตารางนี้ได้ไหม"
+--    RLS   = ประตูชั้นสอง "แตะได้เฉพาะแถวไหน"
+--    ให้สิทธิ์ตรงนี้เอง เพื่อให้ใช้ได้แม้ปิด "Automatically expose new tables" ตอนสร้างโปรเจกต์
+-- ---------------------------------------------------------------------
+grant select, insert, update on public.categories, public.transactions, public.homework, public.notes to authenticated;
+-- anon อ่าน categories ได้อย่างเดียว ไว้ให้ GitHub Action เรียกกันโปรเจกต์หลับ
+-- RLS ยังคุมอยู่: ไม่ได้ล็อกอิน auth.uid() เป็น null จึงได้ผลลัพธ์ว่างเสมอ
+grant select on public.categories to anon;
+
+
+-- ---------------------------------------------------------------------
 -- 8) หมวดตั้งต้น: สมัครสมาชิกปุ๊บ มีหมวดให้ใช้ทันที
 --    security definer = ฟังก์ชันนี้รันด้วยสิทธิ์เจ้าของฐานข้อมูล
 --    จำเป็นเพราะตอนสมัคร ผู้ใช้ยังไม่ได้ล็อกอิน RLS จะไม่ยอมให้ insert
