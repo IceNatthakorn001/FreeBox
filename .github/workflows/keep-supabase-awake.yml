@@ -1,0 +1,28 @@
+# Supabase แผนฟรีจะหยุดโปรเจกต์ ถ้าไม่มีใครใช้ฐานข้อมูลเกิน 7 วัน
+# ไฟล์นี้สั่ง GitHub ให้เรียกฐานข้อมูลทุก 3 วัน กันโปรเจกต์ถูกหยุดตอนไม่ได้เปิดแอปนาน ๆ (เช่นช่วงปิดเทอม)
+#
+# ต้องตั้งค่าใน GitHub repo > Settings > Secrets and variables > Actions:
+#   SUPABASE_URL       = https://xxxx.supabase.co
+#   SUPABASE_ANON_KEY  = anon key (ตัวเดียวกับใน .env)
+
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: '0 2 */3 * *' # 02:00 UTC (09:00 เวลาไทย) ทุก 3 วัน
+  workflow_dispatch: # มีปุ่ม "Run workflow" ให้กดทดสอบเองได้
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query the database once
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        # ไม่ได้ล็อกอิน RLS จะคืนรายการว่าง [] แต่ฐานข้อมูลก็ถูกเรียกแล้ว นับว่ายังมีการใช้งาน
+        # --fail = ถ้าได้ error จาก Supabase ให้ workflow ขึ้นสีแดง จะได้รู้
+        run: |
+          curl --fail --silent --show-error \
+            "$SUPABASE_URL/rest/v1/categories?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY"

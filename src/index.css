@@ -1,12 +1,730 @@
+/* =====================================================================
+   FreeBox styles
+   - สีทั้งหมดเก็บเป็นตัวแปร (--ชื่อ) ที่ :root เปลี่ยนธีมทีเดียวทั้งแอป
+   - เขียนสำหรับมือถือก่อน แล้วค่อยปรับจอใหญ่ใน @media (min-width: 768px) ท้ายไฟล์
+   ===================================================================== */
+
+:root {
+  --bg: #f5f6f7;
+  --surface: #ffffff;
+  --text: #1c1f23;
+  --muted: #6b7280;
+  --border: #e3e5e8;
+  --accent: #0f766e;
+  --accent-soft: #e3f2ef;
+  --income: #15803d;
+  --danger: #b91c1c;
+  --danger-soft: #fdecec;
+  --nav-h: 60px;
+  --nav-w: 220px;
+  --radius: 12px;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Noto Sans Thai', sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  color-scheme: light dark; /* ให้ช่องกรอก/ปฏิทินของเบราว์เซอร์เปลี่ยนตามธีมด้วย */
+}
+
+/* โหมดมืด: เปลี่ยนแค่ค่าตัวแปร ส่วนอื่นตามเอง */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111315;
+    --surface: #1b1e21;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --border: #2d3136;
+    --accent: #2dd4bf;
+    --accent-soft: #15302c;
+    --income: #4ade80;
+    --danger: #f87171;
+    --danger-soft: #3a1d1d;
+  }
+}
+
+* {
+  box-sizing: border-box; /* ความกว้างรวม padding และ border แล้ว คิดขนาดง่ายขึ้น */
+}
+
 body {
   margin: 0;
-  padding: 16px;
-  font-family: system-ui, sans-serif;
+  background: var(--bg);
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 12px;
+}
+
+h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+
+p {
+  margin: 0 0 8px;
+}
+
+a {
+  color: var(--accent);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.8rem;
+}
+
+.income {
+  color: var(--income);
+}
+
+.empty {
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* ---------- ปุ่ม ---------- */
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 40px; /* ปุ่มสูงอย่างน้อย 40px นิ้วกดง่าย */
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn.primary {
+    color: #06201c;
+  }
+}
+
+.btn.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: transparent;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.btn-link {
+  border: 0;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+/* ---------- ฟอร์ม ---------- */
+input,
+select,
+textarea {
+  font: inherit;
+  font-size: 16px; /* ต่ำกว่า 16px iPhone จะซูมหน้าจอเองตอนแตะช่องกรอก */
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.form label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.error-text {
+  color: var(--danger);
+}
+
+.error-box {
+  background: var(--danger-soft);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.notice {
+  display: block;
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.notice-link {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.segmented button {
+  border: 0;
+  background: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--surface);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+}
+
+.search {
+  margin-bottom: 12px;
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.inline-form input {
+  flex: 1 1 140px;
+  width: auto;
+}
+
+.inline-form select {
+  width: auto;
+}
+
+.icon-input {
+  flex: 0 0 56px !important;
+  text-align: center;
+}
+
+/* ---------- โครงหน้าจอ: มือถือ = เมนูล่าง ---------- */
+.content {
+  max-width: 960px;
+  /* เว้นที่ด้านล่างให้เมนู + ขอบโค้งของ iPhone (safe-area) */
+  padding: 16px 16px calc(var(--nav-h) + 24px + env(safe-area-inset-bottom));
+}
+
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.brand {
+  display: none; /* มือถือไม่มีที่ แสดงเฉพาะจอใหญ่ */
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+}
+
+/* NavLink ใส่ class "active" ให้เองเมื่ออยู่หน้านั้น */
+.nav-item.active {
+  color: var(--accent);
+}
+
+.nav-icon {
+  position: relative;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.65rem;
+  line-height: 18px;
+  text-align: center;
+}
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.page-head h1 {
+  margin: 0;
+}
+
+/* ---------- การ์ด ---------- */
+.cards {
+  display: grid;
+  gap: 12px;
 }
 
 .card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 16px;
   margin-bottom: 12px;
+}
+
+.cards .card {
+  margin-bottom: 0;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-link {
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stats > div {
+  display: grid;
+}
+
+.stats strong {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums; /* ตัวเลขกว้างเท่ากัน เรียงตรงกัน */
+}
+
+.stats .big {
+  font-size: 1.25rem;
+}
+
+.mini-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mini-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.mini-list li:last-child {
+  border-bottom: 0;
+}
+
+.overdue,
+.overdue .hw-due {
+  color: var(--danger);
+}
+
+/* ---------- ชิป (ปุ่มเล็ก) ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.chip.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.chip-x {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0 0 0 4px;
+}
+
+.quick-form {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- หน้าเงิน ---------- */
+.month-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bars {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.bars li {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.bar-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.bar-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.day-group {
+  margin-bottom: 12px;
+}
+
+.day-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 4px 6px;
+  font-weight: 600;
+}
+
+.tx-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tx-list:empty {
+  display: none;
+}
+
+.tx-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.tx-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tx-icon {
+  width: 32px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.tx-main {
+  flex: 1;
+  display: grid;
+  min-width: 0;
+}
+
+.tx-main > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-row > span:last-child {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- การบ้าน ---------- */
+.hw-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.hw-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.hw-item.overdue {
+  border-color: var(--danger);
+}
+
+.hw-main {
+  flex: 1;
+  display: grid;
+  border: 0;
+  background: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hw-subject {
+  font-weight: 600;
+}
+
+.hw-due {
+  color: var(--muted);
+}
+
+.hw-list.done .hw-subject {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ---------- โน้ต ---------- */
+.note-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.note-card {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: left;
+  cursor: pointer;
+}
+
+.note-preview {
+  white-space: pre-wrap; /* แสดงการขึ้นบรรทัดใหม่ตามที่พิมพ์ */
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* ตัดเหลือ 4 บรรทัด */
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- หน้าต่างลอย (dialog) ---------- */
+.sheet {
+  width: 100%;
+  max-width: 100%;
+  max-height: 90dvh;
+  margin: auto 0 0; /* มือถือ: ชิดล่างจอ */
+  border: 0;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  color: var(--text);
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.sheet-head h2 {
+  margin: 0;
+}
+
+/* ---------- หน้าล็อกอิน ---------- */
+.login {
+  max-width: 380px;
+  margin: 10vh auto 0;
+  padding: 16px;
+}
+
+.login .form {
+  margin-top: 24px;
+}
+
+/* =====================================================================
+   iPad และคอม (กว้างตั้งแต่ 768px): เมนูย้ายไปซ้าย การ์ดเรียงหลายคอลัมน์
+   ===================================================================== */
+@media (min-width: 768px) {
+  .shell {
+    display: flex;
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: var(--nav-w);
+    flex: none;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 12px;
+    border-top: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .brand {
+    display: block;
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 0 12px 16px;
+  }
+
+  .nav-item {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .content {
+    flex: 1;
+    padding: 32px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .note-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .sheet {
+    max-width: 520px;
+    margin: auto; /* จอใหญ่: กลางจอ */
+    border-radius: 16px;
+  }
 }
