@@ -72,6 +72,7 @@ npx supabase functions deploy ingest-bank-email --no-verify-jwt
 
 1. เปิดอีเมลจากธนาคารฉบับหนึ่ง → จุดสามจุด → **Filter messages like this**
 2. ใส่อีเมลผู้ส่งของธนาคาร → Create filter → ติ๊ก **Apply the label** → สร้างป้ายชื่อ `bank`
+   - กสิกร (K PLUS): From = `KPLUS@kasikornbank.com` และ Subject = `Success` (ไม่เอารายการที่ทำไม่สำเร็จ)
 3. ติ๊ก **Also apply filter to matching conversations** ถ้าอยากดึงอีเมลเก่าด้วย (จะเข้าหน้ารอตรวจทั้งหมด)
 
 ### 6.4 ตั้ง Apps Script

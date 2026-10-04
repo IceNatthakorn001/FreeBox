@@ -109,9 +109,51 @@ export const genericParser: BankParser = {
 //   },
 // }
 
-const BANK_PARSERS: BankParser[] = [
-  // myBankParser,
-]
+// ---- กสิกรไทย (K PLUS)
+// อีเมลจาก KPLUS@kasikornbank.com มี 4 แบบ: โอนเงิน, โอนพร้อมเพย์, ชำระค่าสินค้าและบริการ, ชำระเงินด้วย QR
+// ทุกแบบเป็น "เงินออก" (K PLUS ไม่ส่งอีเมลตอนเงินเข้า) และมีโครงเดียวกัน คือบรรทัดละ "ชื่อช่อง: ค่า"
+// ต่างกันแค่ชื่อช่องของผู้รับ เลยลองทีละชื่อใน KPLUS_PAYEE_FIELDS
+
+// ชื่อช่องผู้รับ เรียงจากเจาะจงไปกว้าง ("ชื่อบัญชี" ต้องอยู่ก่อน "ธนาคารผู้รับเงิน" เพราะอยากได้ชื่อคน ไม่ใช่ชื่อธนาคาร)
+const KPLUS_PAYEE_FIELDS = ['เพื่อเข้าบัญชีร้านค้า/บริษัท', 'เพื่อเข้าบัญชีบริษัท', 'ชื่อผู้รับเงิน', 'ชื่อบัญชี']
+
+/** หาค่าของช่อง "ชื่อช่อง: ค่า" ในเนื้ออีเมล คืนค่าจนสุดบรรทัด */
+function kplusField(body: string, label: string): string | undefined {
+  // escape อักขระพิเศษของ regex ในชื่อช่อง เช่น "(" ใน "จำนวนเงิน (บาท)"
+  const escaped = label.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')
+  return body.match(new RegExp(`${escaped}\\s*:\\s*([^\\n\\r]+)`))?.[1].trim()
+}
+
+/** "04/10/2026 11:20:13" (เวลาไทย) → ISO พร้อม +07:00 ให้ฐานข้อมูลเก็บเวลาที่จ่ายจริง ไม่ใช่เวลาที่อีเมลมาถึง */
+function kplusDate(text: string | undefined): string | null {
+  const m = text?.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}:\d{2}:\d{2})/)
+  return m ? `${m[3]}-${m[2]}-${m[1]}T${m[4]}+07:00` : null
+}
+
+const kplusParser: BankParser = {
+  name: 'kplus',
+  matches: (e) => /kasikornbank\.com/i.test(e.from),
+  parse: (e) => {
+    const amount = kplusField(e.body, 'จำนวนเงิน (บาท)')?.match(/^[\d,]+\.\d{2}/)
+    if (!amount) return null // ไม่ใช่อีเมลแจ้งผลรายการ ให้ตัวอ่านทั่วไปลองต่อ
+
+    const ref = kplusField(e.body, 'เลขที่รายการ')?.match(/^[A-Za-z0-9]+/)?.[0]
+    const payee = KPLUS_PAYEE_FIELDS.map((f) => kplusField(e.body, f)).find(Boolean)
+    // โอนให้คน → "โอนให้ ..." จ่ายร้าน → ชื่อร้านเฉย ๆ
+    const isTransfer = /Funds Transfer/i.test(e.subject)
+    const note = payee ? (isTransfer ? `โอนให้ ${payee}` : payee) : e.subject
+
+    return {
+      amount_satang: amountToSatang(amount[0]),
+      type: 'expense',
+      external_id: ref ? `kplus:${ref}` : `gmail:${e.id}`,
+      occurred_at: kplusDate(kplusField(e.body, 'วันที่ทำรายการ')) ?? e.date,
+      note: note.slice(0, 200),
+    }
+  },
+}
+
+const BANK_PARSERS: BankParser[] = [kplusParser]
 
 /** ลองตัวอ่านเฉพาะธนาคารก่อน ไม่ได้ผลค่อยใช้ตัวทั่วไป คืนค่าเสมอ (ไม่ทิ้งอีเมลเงียบ ๆ) */
 export function parseBankEmail(email: BankEmail): ParsedTransaction & { parser: string } {
